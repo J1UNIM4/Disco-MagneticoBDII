@@ -114,7 +114,7 @@ butonS.addEventListener('click',()=>{
                 for (let s = 0; s <indexsect + 1; s++) {
                     for (let g = 0; g < discomagnetico[i][j][k][s].length; g++) {
                         if(discomagnetico[i][j][k][s][g][3] == val){
-                            alert('encontrado' + discomagnetico[i][j][k][s][g][3]);
+                            alert('encontrado ' + discomagnetico[i][j][k][s][g][3]);
                         }                        
                     }
                 }
