@@ -8,10 +8,17 @@
 </head>
 <body>
     <h1>DataBase Simulador</h1>
+    <div>
+        <h4 id="Sector">Sector capacidad 32 <input type="text" placeholder="New capacity"></h4><button id="sectC">SET</button>
+        <h4 id="Bloque">Bloque capacidad 2<input type="text" placeholder="New capacity"></h4><button id="BloqC">SET</button>
+        <h4 id="Pista">Pista capacidad 2<input type="text" placeholder="New capacity"></h4><button id="PistC">SET</button>
+        <h4 id="Superficie">Superficie capacidad 2<input type="text" placeholder="New capacity"></h4><button id="superfC">SET</button>
+
+    </div>
     <h3>Busqueda de elemento</h3>
     <input id="searchT" type="text">
     <button id="searchB">search</button>
-    <div>display information</div>
+    <div id="results"></div>
     <h3>Insertar elemento</h3>
     <label for="">Type</label>
     <input id="type" type="text">
@@ -20,7 +27,8 @@
     <label for="">Value</label>
     <input id="value" type="text">
     <button id="insertionB">Insert</button>
-    <button id="statusB"></button>
+    <button id="statusB">ESTADO DEL DISCO</button>
+    <button id="informationB">Set information</button>
 
     <script src="disco2.js"></script>
 </body>
