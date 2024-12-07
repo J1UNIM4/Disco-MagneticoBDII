@@ -5,27 +5,28 @@ const buttonset = document.getElementById("informationB");
 
 let discomagnetico = [[[[[]]]]]; // Disco inicializado
 let discoC = 16; // Capacidad de discos
-let superficieC = 16384; // Capacidad de superficies
-let pistaC = 32; // Capacidad de pistas
+let superficieC = 2; // Capacidad de superficies
+let pistaC = 2; // Capacidad de pistas
 let bloqueC = 2; // Capacidad de bloques
-let sectoresC = 4096; // Capacidad de sectores
+let sectoresC = 32; // Capacidad de sectores
 let totalbytesS = 0; // Bytes actuales en el sector
 
 let informacion = [
-  [1,'Fruit of the loom',7.97,0.6,8.57],
-  [2,'Rawlings little Leager',2.97,0.22,3.19],
-  [3,'Secret Antiperspirant',1.29,0.1,1.39],
-  [4,'Deadpool DVD',14.96,1.12,16.08],
-  [5,'Maxwell House Coffe',7.28,0.55,7.83],
-  [6,'Banana Boat Sunscr',6.68,0.5,7.18],
-  [7,'Wrench set,18 pieces',10,0.75,10.75],
-  [8,'M and M,42 oz',8.98,0.67,9.65],
-  [9,'Bertoli Alfredo Sauces',2.12,0.16,2.28],
-  [10,'Large paperclips',6.19,0.46,6.65]
+  ['Integer(10)',4,1],['VARCHAR(40)',40,'Fruit of the loom'],['DECIMAL(10,2)',8,7.97],['DECIMAL(10,2)',8,0.6],['DECIMAL(10,2)',8,8.57],
+  ['Integer(10)',4,2],['VARCHAR(40)',40,'Rawlings little Leager'],['DECIMAL(10,2)',8,2.97],['DECIMAL(10,2)',8,0.22],['DECIMAL(10,2)',8,,3.19],
+  ['Integer(10)',4,3],['VARCHAR(40)',40,'Secret Antiperspirant'],['DECIMAL(10,2)',8,1.29],['DECIMAL(10,2)',8,0.1],['DECIMAL(10,2)',8,1.39],
+  ['Integer(10)',4,4],['VARCHAR(40)',40,'Deadpool DVD'],['DECIMAL(10,2)',8,14.96],['DECIMAL(10,2)',8,1.12],['DECIMAL(10,2)',8,16.08],
+  ['Integer(10)',4,5],['VARCHAR(40)',40,'Maxwell House Coffe'],['DECIMAL(10,2)',8,7.28],['DECIMAL(10,2)',8,0.55],['DECIMAL(10,2)',8,7.83],
+  ['Integer(10)',4,6],['VARCHAR(40)',40,'Banana Boat Sunscr'],['DECIMAL(10,2)',8,6.68],['DECIMAL(10,2)',8,0.5],['DECIMAL(10,2)',8,7.18],
+  ['Integer(10)',4,7],['VARCHAR(40)',40,'Wrench set,18 pieces'],['DECIMAL(10,2)',8,10],['DECIMAL(10,2)',8,0.75],['DECIMAL(10,2)',8,10.75],
+  ['Integer(10)',4,8],['VARCHAR(40)',40,'M and M,42 oz'],['DECIMAL(10,2)',8,8.98],['DECIMAL(10,2)',8,0.67],['DECIMAL(10,2)',8,9.65],
+  ['Integer(10)',4,9],['VARCHAR(40)',40,'Bertoli Alfredo Sauces'],['DECIMAL(10,2)',8,2.12],['DECIMAL(10,2)',8,0.16],['DECIMAL(10,2)',8,2.28],
+  ['Integer(10)',4,10],['VARCHAR(40)',40,'Large paperclips'],['DECIMAL(10,2)',8,6.19],['DECIMAL(10,2)',8,0.46],['DECIMAL(10,2)',8,6.65]
 ];
 
 
-function insert(type,bytes,value){
+
+function insert(t,bytes,v,insert){
   let indexs = discomagnetico.length - 1;
   let indexp = discomagnetico[indexs].length - 1;
   let indexb = discomagnetico[indexs][indexp].length - 1;
@@ -34,15 +35,16 @@ function insert(type,bytes,value){
   if (totalbytesS + bytes >= sectoresC) {
     const rest = sectoresC - totalbytesS;
     discomagnetico[indexs][indexp][indexb][indexsect].push([
-      true,
-      t.value,
+      t,
       rest,
-      v.value,
+      v,
     ]);
+    if (insert) {
+      informacion.push([t,rest,v]);
+    }
     indexsect++;
 
     if (indexsect == bloqueC) {
-      alert('ENTRANDO AL BLOQUE');
       indexsect = 0;
       indexb++;
       if (discomagnetico[indexs][indexp].length == pistaC) {
@@ -64,10 +66,9 @@ function insert(type,bytes,value){
     discomagnetico[indexs][indexp][indexb].push([]);
     if (totalbytesS + bytes > sectoresC) {
       discomagnetico[indexs][indexp][indexb][indexsect].push([
-        true,
-        t.value,
+        t,
         bytes - rest,
-        v.value,
+        v,
       ]);
       totalbytesS = bytes - rest;
     }else{
@@ -75,23 +76,63 @@ function insert(type,bytes,value){
     }
   } else {
     discomagnetico[indexs][indexp][indexb][indexsect].push([
-      false,
-      t.value,
+      t,
       bytes,
-      v.value,
+      v,
     ]);
+    if (insert) {
+      informacion.push([t,bytes,v]);
+    }
     totalbytesS += bytes;
   }
 }
-
-buttonset.addEventListener('click',()=>{
+function setInformation(){
   informacion.forEach((tupla,index)=>{
-    tupla.forEach((elemento,index)=>{
+    insert(tupla[0],tupla[1],tupla[2],false);
+  })
+}
 
-    })
-})
+document.getElementById('sectC').addEventListener('click',()=>{
+  capacity = document.getElementById('Sector');
+  capacity.textContent = 'Sector capacidad '+ capacity.childNodes[1].value;
+  const input = document.createElement("input");
+  input.placeholder = 'New capacity';
+  capacity.appendChild(input);
+  sectoresC = parseInt(capacity.childNodes[1].value);
+  discomagnetico = [[[[[]]]]];
+  setInformation();
 });
-
+document.getElementById('BloqC').addEventListener('click',()=>{
+  capacity = document.getElementById('Bloque');
+  capacity.textContent = 'Bloque capacidad '+ capacity.childNodes[1].value;
+  const input = document.createElement("input");
+  input.placeholder = 'New capacity';
+  capacity.appendChild(input);
+  bloqueC = parseInt(capacity.childNodes[1].value);
+  discomagnetico = [[[[[]]]]];
+  setInformation();
+});
+document.getElementById('PistC').addEventListener('click',()=>{
+  capacity = document.getElementById('Pista');
+  capacity.textContent = 'Pista capacidad '+ capacity.childNodes[1].value;
+  const input = document.createElement("input");
+  input.placeholder = 'New capacity';
+  capacity.appendChild(input);
+  pistaC = parseInt(capacity.childNodes[1].value);
+  discomagnetico = [[[[[]]]]];
+  setInformation();
+});
+document.getElementById('superfC').addEventListener('click',()=>{
+  capacity = document.getElementById('Superficie');
+  capacity.textContent = 'Superfice capacidad '+ capacity.childNodes[1].value;
+  const input = document.createElement("input");
+  input.placeholder = 'New capacity';
+  capacity.appendChild(input);
+  superficieC = parseInt(capacity.childNodes[1].value);
+  discomagnetico = [[[[[]]]]];
+  setInformation();
+});
+buttonset.addEventListener('click',setInformation);
 
 
 
@@ -119,63 +160,8 @@ butonI.addEventListener("click", () => {
     alert("Error: Los bytes deben ser un número.");
     return;
   }
-
-  let indexs = discomagnetico.length - 1;
-  let indexp = discomagnetico[indexs].length - 1;
-  let indexb = discomagnetico[indexs][indexp].length - 1;
-  let indexsect = discomagnetico[indexs][indexp][indexb].length - 1;
-
-  if (totalbytesS + bytes >= sectoresC) {
-    const rest = sectoresC - totalbytesS;
-    discomagnetico[indexs][indexp][indexb][indexsect].push([
-      true,
-      t.value,
-      rest,
-      v.value,
-    ]);
-    indexsect++;
-
-    if (indexsect == bloqueC) {
-      alert('ENTRANDO AL BLOQUE');
-      indexsect = 0;
-      indexb++;
-      if (discomagnetico[indexs][indexp].length == pistaC) {
-        indexp++;
-        indexb = 0;
-        if (discomagnetico[indexs].length == superficieC) {
-          indexp = 0;
-          if (discomagnetico.length == discoC) {
-            alert("Error: No hay más espacio en el disco.");
-            return;
-          }
-          discomagnetico.push([]);
-          indexs++;
-        }
-        discomagnetico[indexs].push([]);
-      }
-      discomagnetico[indexs][indexp].push([]);
-    }
-    discomagnetico[indexs][indexp][indexb].push([]);
-    if (totalbytesS + bytes > sectoresC) {
-      discomagnetico[indexs][indexp][indexb][indexsect].push([
-        true,
-        t.value,
-        bytes - rest,
-        v.value,
-      ]);
-      totalbytesS = bytes - rest;
-    }else{
-        totalbytesS = 0;
-    }
-  } else {
-    discomagnetico[indexs][indexp][indexb][indexsect].push([
-      false,
-      t.value,
-      bytes,
-      v.value,
-    ]);
-    totalbytesS += bytes;
-  }
+  insert(t.value,bytes,v.value,true);
+  
 
   t.value = "";
   b.value = "";
@@ -201,11 +187,11 @@ butonS.addEventListener("click", () => {
       pista.forEach((bloque, bIndex) => {
         bloque.forEach((sector, secIndex) => {
           sector.forEach((elemento) => {
-            if (elemento[3] === val) {
+            if (elemento[2] == val) {
               encontrado = true;
               // Mostrar información en el contenedor
               const resultItem = document.createElement("div");
-              resultItem.textContent = `Encontrado en Superficie ${sIndex}, Pista ${pIndex}, Bloque ${bIndex}, Sector ${secIndex}: Type=${elemento[1]}, Bytes=${elemento[2]}, Value=${elemento[3]}`;
+              resultItem.textContent = `Encontrado en Superficie ${sIndex}, Pista ${pIndex}, Bloque ${bIndex}, Sector ${secIndex}: Type=${elemento[0]}, Bytes=${elemento[1]}, Value=${elemento[2]}`;
               resultsDiv.appendChild(resultItem);
             }
           });
