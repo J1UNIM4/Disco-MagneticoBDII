@@ -1,6 +1,4 @@
 const butonS = document.getElementById("searchB");
-const buttonState = document.getElementById("statusB");
-const buttonset = document.getElementById("informationB");
 
 let discomagnetico = [[[[[]]]]]; // Disco inicializado
 let discoC = 16; // Capacidad de discos
@@ -15,7 +13,7 @@ const excel_input= document.getElementById("excel-file");
 let information;
 
 excel_input.addEventListener('change',async function(){
-  information =await readXlsxFile(excel_input.files[0]);
+  information = await readXlsxFile(excel_input.files[0]);
   setInformation();
   print();
 });
@@ -155,12 +153,12 @@ document.getElementById('setc').addEventListener('click', () => {
   }
   if(inputtra.value){
     pistaC = parseInt(inputtra.value);
-    trackLabel.textContent = 'Sector Capacidad ' + pistaC + ' :';
+    trackLabel.textContent = 'Pista Capacidad ' + pistaC + ' :';
     inputtra.value = "";
   }
   if(inputsurf.value){
     superficieC = parseInt(inputsurf.value);
-    surfLabel.textContent = 'Sector Capacidad ' + superficieC + ' :';
+    surfLabel.textContent = 'Superficie Capacidad ' + superficieC + ' :';
     inputsurf.value = "";
   }
   discomagnetico = [[[[[]]]]];
@@ -224,9 +222,5 @@ butonS.addEventListener("click", () => {
     resultsDiv.innerText = "No se encontró el valor especificado.";
     return;
   }
-  
-  
-
-
 });
 
