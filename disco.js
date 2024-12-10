@@ -1,5 +1,3 @@
-const butonS = document.getElementById("searchB");
-
 let discomagnetico = [[[[[]]]]]; // Disco inicializado
 let discoC = 16; // Capacidad de discos
 let superficieC = 2; // Capacidad de superficies
@@ -168,7 +166,7 @@ document.getElementById('setc').addEventListener('click', () => {
 
 
 // Manejo de búsqueda de datos
-butonS.addEventListener("click", () => {
+document.getElementById('searchB').addEventListener("click", () => {
   const val = document.getElementById("searchT")?.value;
   const resultsDiv = document.getElementById("results");
   
@@ -203,7 +201,7 @@ butonS.addEventListener("click", () => {
 
                 sector.forEach((elemento) => {
                   const e = document.createElement('button');
-                  e.textContent = `Value=${elemento[2]} `;
+                  e.textContent = `${elemento[2]} `;
                   e.onclick = () => {
                       alert(`Type=${elemento[0]}, \nBytes=${elemento[1]},\n Value=${elemento[2]} `)
                   };
