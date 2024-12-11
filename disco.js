@@ -6,41 +6,59 @@ let bloqueC = 2; // Capacidad de bloques
 let sectoresC = 32; // Capacidad de sectores
 let totalbytesS = 0; // Bytes actuales en el sector
 
-const excel_input= document.getElementById("excel-file");
+let information = [];
 
-let information;
-
-excel_input.addEventListener('change',async function(){
-  information = await readXlsxFile(excel_input.files[0]);
+function crearTabla(data) {
+  const todasFilas = data.split(/\r?\n|\r/);
+  let tabla = '<table class="table table-bordered">';
+  for (let fila = 0; fila < todasFilas.length; fila++) {
+    if (fila === 0) {
+      tabla += '<thead>';
+      tabla += '<tr>';
+    } else {
+      tabla += '<tr>';
+      // Create a new empty array for the current row
+      information.push([]);
+    }
+    const celdasFila = todasFilas[fila].split(';');
+    for (let rowCell = 0; rowCell < celdasFila.length; rowCell++) {
+      if (fila === 0) {
+        tabla += '<th>';
+        tabla += celdasFila[rowCell];
+        tabla += '</th>';
+      } else {
+        tabla += '<td>';
+        tabla += celdasFila[rowCell];
+        tabla += '</td>';
+        // Add the cell value to the current row array in information
+        information[fila - 1].push(celdasFila[rowCell]);
+      }
+    }
+    if (fila === 0) {
+      tabla += '</tr>';
+      tabla += '</thead>';
+      tabla += '<tbody>';
+    } else {
+      tabla += '</tr>';
+    }
+  }
+  tabla += '</tbody>';
+  tabla += '</table>';
+  document.querySelector('#miTabla').innerHTML = tabla;
   setInformation();
-  print();
-});
-
-function print(){
-  // Obtener el contenedor donde se insertará la tabla
-  const tablaContainer = document.getElementById('miTabla');
-
-  // Crear la tabla y el cuerpo
-  const tabla = document.createElement('table');
-  tabla.classList.add('table');
-  tabla.classList.add('table-bordered');
-  const tbody = document.createElement('tbody');
-
-  // Crear las filas y celdas
-  information.forEach(filaDatos => {
-    const tr = document.createElement('tr');
-    filaDatos.forEach(dato => {
-      const td = document.createElement('td');
-      td.textContent = dato;
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-
-  // Agregar el cuerpo a la tabla y la tabla al contenedor
-  tabla.appendChild(tbody);
-  tablaContainer.appendChild(tabla);
 }
+
+function leerArchivo2(evt) {
+  let file = evt.target.files[0];
+  let reader = new FileReader();
+  reader.onload = (e) => {
+    crearTabla(e.target.result);
+  };
+  reader.readAsText(file);
+}
+document.querySelector('#csvFile')
+  .addEventListener('change', leerArchivo2, false);
+
 
 
 function insert(t,bytes,v){
@@ -52,7 +70,7 @@ function insert(t,bytes,v){
 
   if (totalbytesS + bytes >= sectoresC) {
     if(totalbytesS + bytes > sectoresC){
-      discomagnetico[indexs][indexp][indexb][indexsect].push(["pointer",1,"puntero a " + t]);
+      discomagnetico[indexs][indexp][indexb][indexsect].push(["pointer",4,"puntero a " + t]);
       totalbytesS++;
     }else{
       discomagnetico[indexs][indexp][indexb][indexsect].push([
@@ -103,14 +121,15 @@ function insert(t,bytes,v){
   }
 }
 function setInformation(){
-  information.forEach((tupla,index)=>{
+  console.log(information);
+  information.forEach((tupla,index)=>{  
     if(index!=0){
       const min_priority = [
-        {type:'Integer(10)', len: 4, val: tupla[0]},
+        {type:'Integer(10)', len: 4, val: parseInt(tupla[0])},
         {type:'VARCHAR(40)', len: tupla[1].length, val: tupla[1]},
-        {type:'DECIMAL(10,2)', len: 8, val: tupla[2]},
-        {type:'DECIMAL(10,2)', len: 8, val: tupla[3]},
-        {type:'DECIMAL(10,2)', len: 8, val: tupla[4]}
+        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[2])},
+        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[3])},
+        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[4])}
       ];
       min_priority.sort((a,b)=> a.len - b.len);
       min_priority.forEach((e)=>{
@@ -120,7 +139,6 @@ function setInformation(){
   });
   console.log("Estado del disco:");
   console.log(JSON.stringify(discomagnetico, null, 2));
-
 }
 
 document.getElementById('setc').addEventListener('click', () => {
@@ -202,8 +220,8 @@ document.getElementById('searchB').addEventListener("click", () => {
                 sector.forEach((elemento) => {
                   const e = document.createElement('button');
                   e.textContent = `${elemento[2]} `;
-                  e.onclick = () => {
-                      alert(`Type=${elemento[0]}, \nBytes=${elemento[1]},\n Value=${elemento[2]} `)
+                  e.onclick = ()=>{
+                      alert(`Type=${elemento[0]}, \nBytes=${elemento[1]},\nValue=${elemento[2]} `)
                   };
                   sect.appendChild(e);
                 });
