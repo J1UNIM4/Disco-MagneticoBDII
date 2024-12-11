@@ -67,7 +67,6 @@ function insert(t,bytes,v){
   let indexb = discomagnetico[indexs][indexp].length - 1;
   let indexsect = discomagnetico[indexs][indexp][indexb].length - 1;
 
-
   if (totalbytesS + bytes >= sectoresC) {
     if(totalbytesS + bytes > sectoresC){
       discomagnetico[indexs][indexp][indexb][indexsect].push(["pointer",4,"puntero a " + t,v]);
@@ -121,7 +120,7 @@ function insert(t,bytes,v){
       "Puntero sector",
       1,
       `Superficie  ${indexs}, Pista ${indexp}, Bloque ${indexb}, Sector ${indexsect}`,
-      `discomagnetico[${indexs}][${indexp}][${indexb}][${indexs}]`
+      `discomagnetico[${indexs}][${indexp}][${indexb}][${indexsect}]`
     ])
 
   } else {
@@ -153,7 +152,7 @@ function setInformation(){
 }
 
 document.getElementById('setc').addEventListener('click', () => {
-  const sectorLabel = document.querySelector('.sect label');
+  const sectorLabel = document.querySelector('.sect label');  
   const blocLabel = document.querySelector('.bloc label');
   const trackLabel = document.querySelector('.track label');
   const surfLabel = document.querySelector('.surf label');
@@ -189,6 +188,7 @@ document.getElementById('setc').addEventListener('click', () => {
     inputsurf.value = "";
   }
   discomagnetico = [[[[[]]]]];
+  totalbytesS = 0;
   setInformation();
   return;
 });

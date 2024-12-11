@@ -44,6 +44,11 @@ h3 {
   margin-right: 10px; /* Add some spacing between icon and text */
 }
 
+#results{
+  margin-top: 7px;
+  margin-left: 2px;
+}
+
 #results:empty::before {
   content: "No hay resultados aún.";
   color: #999;
