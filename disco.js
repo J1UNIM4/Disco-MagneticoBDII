@@ -70,7 +70,7 @@ function insert(t,bytes,v){
 
   if (totalbytesS + bytes >= sectoresC) {
     if(totalbytesS + bytes > sectoresC){
-      discomagnetico[indexs][indexp][indexb][indexsect].push(["pointer",4,"puntero a " + t]);
+      discomagnetico[indexs][indexp][indexb][indexsect].push(["pointer",4,"puntero a " + t,v]);
       totalbytesS++;
     }else{
       discomagnetico[indexs][indexp][indexb][indexsect].push([
@@ -79,7 +79,12 @@ function insert(t,bytes,v){
         v,
       ]);
     }
+    
+    //puntero a sector
+    let indicess = [indexs,indexp,indexb,indexsect];
+
     indexsect++;
+    
 
     if (indexsect == bloqueC) {
       indexsect = 0;
@@ -111,6 +116,14 @@ function insert(t,bytes,v){
     }else{
       totalbytesS = 0;
     }
+    //push puntero next sect
+    discomagnetico[indicess[0]][indicess[1]][indicess[2]][indicess[3]].push([
+      "Puntero sector",
+      1,
+      `Superficie  ${indexs}, Pista ${indexp}, Bloque ${indexb}, Sector ${indexsect}`,
+      `discomagnetico[${indexs}][${indexp}][${indexb}][${indexs}]`
+    ])
+
   } else {
     discomagnetico[indexs][indexp][indexb][indexsect].push([
       t,
@@ -123,19 +136,17 @@ function insert(t,bytes,v){
 function setInformation(){
   console.log(information);
   information.forEach((tupla,index)=>{  
-    if(index!=0){
-      const min_priority = [
-        {type:'Integer(10)', len: 4, val: parseInt(tupla[0])},
-        {type:'VARCHAR(40)', len: tupla[1].length, val: tupla[1]},
-        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[2])},
-        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[3])},
-        {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[4])}
-      ];
-      min_priority.sort((a,b)=> a.len - b.len);
-      min_priority.forEach((e)=>{
-        insert(e.type,e.len,e.val);
-      });
-    }
+    const min_priority = [
+      {type:'Integer(10)', len: 4, val: parseInt(tupla[0])},
+      {type:'VARCHAR(40)', len: tupla[1].length, val: tupla[1]},
+      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[2])},
+      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[3])},
+      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[4])}
+    ];
+    min_priority.sort((a,b)=> a.len - b.len);
+    min_priority.forEach((e)=>{
+      insert(e.type,e.len,e.val);
+    });
   });
   console.log("Estado del disco:");
   console.log(JSON.stringify(discomagnetico, null, 2));
@@ -220,9 +231,16 @@ document.getElementById('searchB').addEventListener("click", () => {
                 sector.forEach((elemento) => {
                   const e = document.createElement('button');
                   e.textContent = `${elemento[2]} `;
-                  e.onclick = ()=>{
-                      alert(`Type=${elemento[0]}, \nBytes=${elemento[1]},\nValue=${elemento[2]} `)
-                  };
+                  if(elemento.length == 4){
+                    e.onclick = ()=>{
+                      alert(`Type = ${elemento[0]}, \nBytes = ${elemento[1]},\nValue = ${elemento[2]} \nReference = ${elemento[3]}`);
+                    };
+                    e.classList.add('pointer');
+                  }else{
+                    e.onclick = ()=>{
+                        alert(`Type=${elemento[0]}, \nBytes=${elemento[1]},\nValue=${elemento[2]} `)
+                    };
+                  }
                   sect.appendChild(e);
                 });
                 resultBlock.appendChild(sect);
