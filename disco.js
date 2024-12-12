@@ -1,12 +1,40 @@
 let discomagnetico = [[[[[]]]]]; // Disco inicializado
-let discoC = 16; // Capacidad de discos
+let discoC = 400; // Capacidad de discos
 let superficieC = 2; // Capacidad de superficies
-let pistaC = 2; // Capacidad de pistas
-let bloqueC = 2; // Capacidad de bloques
-let sectoresC = 32; // Capacidad de sectores
+let pistaC = 1; // Capacidad de pistas
+let bloqueC = 1; // Capacidad de bloques
+let sectoresC = 128; // Capacidad de sectores
 let totalbytesS = 0; // Bytes actuales en el sector
 
 let information = [];
+
+let estructura = [];
+
+function mostrarContenido(contenido) {
+  const todasFilas = contenido.split(/\r?\n|\r/);
+
+  for (let fila = 0; fila < todasFilas.length; fila++) {
+    const celdasFila = todasFilas[fila].split(' ');
+    estructura.push(celdasFila); // Agregamos la fila a la estructura
+  }
+  console.log(estructura);
+}
+function leerArchivo(e) {
+  const archivo = e.target.files[0];
+  if (!archivo) {
+    return;
+  }
+  const lector = new FileReader();
+  lector.onload = function(e) {
+    const contenido = e.target.result;
+    mostrarContenido(contenido);
+  };
+  lector.readAsText(archivo);
+}
+
+document.querySelector('#struct')
+  .addEventListener('change', leerArchivo, false);
+
 
 function crearTabla(data) {
   const todasFilas = data.split(/\r?\n|\r/);
@@ -20,7 +48,7 @@ function crearTabla(data) {
       // Create a new empty array for the current row
       information.push([]);
     }
-    const celdasFila = todasFilas[fila].split(';');
+    const celdasFila = todasFilas[fila].split(',');
     for (let rowCell = 0; rowCell < celdasFila.length; rowCell++) {
       if (fila === 0) {
         tabla += '<th>';
@@ -134,14 +162,17 @@ function insert(t,bytes,v){
 }
 function setInformation(){
   console.log(information);
-  information.forEach((tupla,index)=>{  
-    const min_priority = [
-      {type:'Integer(10)', len: 4, val: parseInt(tupla[0])},
-      {type:'VARCHAR(40)', len: tupla[1].length, val: tupla[1]},
-      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[2])},
-      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[3])},
-      {type:'DECIMAL(10,2)', len: 8, val: parseFloat(tupla[4])}
-    ];
+  
+  information.forEach((tupla,index)=>{ 
+    min_priority =[];
+    const regex = /^VARCHAR/;
+    for (let i = 1; i <= estructura.length-1; i++) {
+      min_priority.push({
+        type: estructura[i][1],
+        len: regex.test.estructura[i][1] ? tupla[i-1].length : 4,
+        val: tupla[i-1]
+      });
+    }
     min_priority.sort((a,b)=> a.len - b.len);
     min_priority.forEach((e)=>{
       insert(e.type,e.len,e.val);
